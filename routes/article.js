@@ -4,6 +4,21 @@ var router = express.Router();
 const querySql = require('../db/index')
 const { upload } = require('../utils/index')
 
+
+//获取分类名称和分类id
+var getClsName = async(arr) => {
+    var newArr = []
+    var cid = await querySql('select classify_id from classify where classname = ?', arr)
+    cid = cid[0].classify_id
+    newArr.push(cid)
+    var className = await querySql('select classname from classify where classname = ?', arr)
+    className = className[0].classname
+    newArr.push(className)
+    return new Promise((resolve, reject) => {
+        resolve(newArr)
+    })
+}
+
 /* 新增博客接⼝ */
 router.post('/add', async(req, res, next) => {
     // 获取标题和内容及分类
@@ -23,16 +38,22 @@ router.post('/add', async(req, res, next) => {
             //  如果数据库里的分类表没有找到req的分类名，说明当前req的classname是一个新的分类名称，则将分类名称插入分类表
             await querySql('insert into classify(classname)values(?)', [classname01])
                 //  再次获取分类id和分类名称
-            var cid01 = await querySql('select classify_id from classify where classname = ?', [classname01])
-            cid01 = cid01[0].classify_id
-            var className_01 = await querySql('select classname from classify where classname = ?', [classname01])
-            className_01 = className_01[0].classname
+                // var cid01 = await querySql('select classify_id from classify where classname = ?', [classname01])
+                // cid01 = cid01[0].classify_id
+                // var className_01 = await querySql('select classname from classify where classname = ?', [classname01])
+                // className_01 = className_01[0].classname
+            var cls = await getClsName([classname01])
+            var cid01 = cls[0]
+            var className_01 = cls[1]
         } else {
             // 否则说明数据库已经有了这个分类名称，则 获取 该分类id和分类名称
-            var cid01 = await querySql('select classify_id from classify where classname = ?', [classname01])
-            cid01 = cid01[0].classify_id
-            var className_01 = await querySql('select classname from classify where classname = ?', [classname01])
-            className_01 = className_01[0].classname
+            // var cid01 = await querySql('select classify_id from classify where classname = ?', [classname01])
+            // cid01 = cid01[0].classify_id
+            // var className_01 = await querySql('select classname from classify where classname = ?', [classname01])
+            // className_01 = className_01[0].classname
+            var cls = await getClsName([classname01])
+            var cid01 = cls[0]
+            var className_01 = cls[1]
         }
 
 
@@ -44,16 +65,22 @@ router.post('/add', async(req, res, next) => {
             //  如果数据库里的分类表没有找到req的分类名，说明当前req的classname是一个新的分类名称，则将分类名称插入分类表
             await querySql('insert into classify(classname)values(?)', [classname02])
                 //  再次获取分类id和分类名称
-            var cid02 = await querySql('select classify_id from classify where classname = ?', [classname02])
-            cid02 = cid02[0].classify_id
-            var className_02 = await querySql('select classname from classify where classname = ?', [classname02])
-            className_02 = className_02[0].classname
+                // var cid02 = await querySql('select classify_id from classify where classname = ?', [classname02])
+                // cid02 = cid02[0].classify_id
+                // var className_02 = await querySql('select classname from classify where classname = ?', [classname02])
+                // className_02 = className_02[0].classname
+            var cls = await getClsName([classname02])
+            var cid02 = cls[0]
+            var className_02 = cls[1]
         } else {
             // 否则说明数据库已经有了这个分类名称，则 获取 该分类id和分类名称
-            var cid02 = await querySql('select classify_id from classify where classname = ?', [classname02])
-            cid02 = cid02[0].classify_id
-            var className_02 = await querySql('select classname from classify where classname = ?', [classname02])
-            className_02 = className_02[0].classname
+            // var cid02 = await querySql('select classify_id from classify where classname = ?', [classname02])
+            // cid02 = cid02[0].classify_id
+            // var className_02 = await querySql('select classname from classify where classname = ?', [classname02])
+            // className_02 = className_02[0].classname
+            var cls = await getClsName([classname02])
+            var cid02 = cls[0]
+            var className_02 = cls[1]
         }
 
 
@@ -65,16 +92,22 @@ router.post('/add', async(req, res, next) => {
             //  如果数据库里的分类表没有找到req的分类名，说明当前req的classname是一个新的分类名称，则将分类名称插入分类表
             await querySql('insert into classify(classname)values(?)', [classname03])
                 //  再次获取分类id和分类名称
-            var cid03 = await querySql('select classify_id from classify where classname = ?', [classname03])
-            cid03 = cid03[0].classify_id
-            var className_03 = await querySql('select classname from classify where classname = ?', [classname03])
-            className_03 = className_03[0].classname
+                // var cid03 = await querySql('select classify_id from classify where classname = ?', [classname03])
+                // cid03 = cid03[0].classify_id
+                // var className_03 = await querySql('select classname from classify where classname = ?', [classname03])
+                // className_03 = className_03[0].classname
+            var cls = await getClsName([classname03])
+            var cid03 = cls[0]
+            var className_03 = cls[1]
         } else {
             // 否则说明数据库已经有了这个分类名称，则 获取 该分类id和分类名称
-            var cid03 = await querySql('select classify_id from classify where classname = ?', [classname03])
-            cid03 = cid03[0].classify_id
-            var className_03 = await querySql('select classname from classify where classname = ?', [classname03])
-            className_03 = className_03[0].classname
+            // var cid03 = await querySql('select classify_id from classify where classname = ?', [classname03])
+            // cid03 = cid03[0].classify_id
+            // var className_03 = await querySql('select classname from classify where classname = ?', [classname03])
+            // className_03 = className_03[0].classname
+            var cls = await getClsName([classname03])
+            var cid03 = cls[0]
+            var className_03 = cls[1]
         }
 
         // 判断type是否为空,不为空返回本身,为空返回0(代表文章类型是技术博文)
@@ -101,7 +134,6 @@ router.post('/add', async(req, res, next) => {
 
 // 上传封面或头像接口 ，将图片保存在当前的 uploads 目录下
 router.post('/upload', upload.single('head_img'), async(req, res, next) => {
-    console.log(req.file)
     let imgPath = req.file.path.split('public')[1]
     let imgUrl = 'http://127.0.0.1:3000' + imgPath
     res.send({ code: 0, msg: '上传成功', data: imgUrl })
@@ -123,7 +155,7 @@ router.get('/typeList', async(req, res, next) => {
                 // 获取所有博客的数量
                 var numsql = 'select * from article where type = 0'
                 var sql = `SELECT id,title,content,
-          class_name01,class_name02,class_name03,type,pic_url,like_count,
+          class_name01,class_name02,class_name03,type,pic_url,like_count,visited,
           DATE_FORMAT(create_time,"%Y-%m-%d %H:%i:%s") AS create_time FROM article where type = 0 limit ` + start + ',' + pageSize;
                 var coust = await querySql(numsql)
                 coust = coust.length
@@ -178,7 +210,7 @@ router.get('/list/Singleclassify', async(req, res, next) => {
     try {
 
         let { classname } = req.query
-        console.log(classname);
+            //console.log(classname);
         let sql = `select pic_url,id,title,content,create_time,
     classify_id01,class_name01,
     classify_id02,class_name02,
@@ -235,8 +267,8 @@ router.get('/detail', async(req, res, next) => {
     DATE_FORMAT(create_time,"%Y-%m-%d %H:%i:%s") AS create_time from article where id = ?`
         let result = await querySql(sql, [article_id])
         let visited = result[0].visited + 1
-        console.log("访问量", visited);
-        // 将文章访问量＋1后更新到文章中
+            //console.log("访问量", visited);
+            // 将文章访问量＋1后更新到文章中
         await querySql('update article set visited = ? where id = ?', [visited, article_id])
         res.send({ code: 0, msg: '获取成功', data: result[0] })
     } catch (e) {

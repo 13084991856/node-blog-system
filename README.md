@@ -3,31 +3,17 @@
 
 ## 前端项目地址 
 
-[基于vue+element-ui实现的个人博客](https://gitee.com/huang-rijian/Vue-personal-Blog-front-end)
-
-## 线上地址 
-
-[黄先森个人博客](http://112.124.52.188)
+[基于vue+element-ui实现的个人博客](https://github.com/13084991856/Blog-front-end)
 
 
 ## 安装运行
 ```
 $前端
-$ git clone https://gitee.com/huang-rijian/Vue-personal-Blog-front-end.git
-$ cd Vue-personal-Blog-front-end
 $ npm install
 $ npm run serve
 ```
 
-## 安装
 
-```
-$后端
-$ git clone https://gitee.com/huang-rijian/node-personal-blog-system.git
-$ cd node-personal-blog-system
-$ npm install
-
-```
 ## 启动mysql数据库
 
 ## 打开数据库可视化工具，新建一个数据库命名为blog

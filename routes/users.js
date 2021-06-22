@@ -39,7 +39,7 @@ router.post('/login', async(req, res, next) => {
     try {
         // 查询有无user
         let user = await querySql('select * from user where username = ?', [username]);
-        console.log(user);
+        //console.log(user);
         if (!user || user.length === 0) {
             // 如果查不到该账号
             res.send({ code: -1, msg: '该账号不存在' })
@@ -67,7 +67,7 @@ router.post('/login', async(req, res, next) => {
 /* 获取用户信息 */
 router.get('/info', async(req, res, next) => {
     // 这个req是经过了 expressJwt拦截token 后得到的对象  req.user可得到解密后的token信息
-    console.log('req:', req);
+    //console.log('req:', req);
     let { username } = req.user
     try {
         let userinfo = await querySql('select nickname,head_img from user where username = ?', [username])
@@ -78,23 +78,64 @@ router.get('/info', async(req, res, next) => {
     }
 });
 
+/* 修改密码接口 */
+router.post('/change', async(req, res, next) => {
+    let { username } = req.user
+    let { oldPass, newPass } = req.body;
+    try {
+
+        oldPass = md5(`${oldPass}${PWD_SALT}`)
+            // 把加密过后的密码以及用户名 和 数据库的数据  匹配
+        let result = await querySql('select * from user where username = ? and password = ?', [username, oldPass])
+            // 如果该结果不存在，则显示密码或账号不正确
+        if (!result || result.length === 0) {
+            res.send({ code: -1, msg: '原始密码不正确' })
+        } else {
+            // 如果该结果存在
+            // 调用加密方法给新密码加密 
+            newPass = md5(`${newPass}${PWD_SALT}`)
+                // 然后再修改数据库
+            await querySql('update user set password = ? where username = ?', [newPass, username])
+            res.send({ code: 0, msg: '修改成功' })
+        }
+
+    } catch (e) {
+        console.log(e);
+        // 把错误交给错误中间件处理
+        next(e)
+    }
+});
+
 //用户信息更新接口
 router.post('/updateUser', async(req, res, next) => {
     let { nickname, head_img } = req.body
     let { username } = req.user
 
     // 通过用户名去用户表查找对应的用户信息
-    let userinfo = await querySql('select id from user where username = ?', [username])
+    let userinfo = await querySql('select id,nickname from user where username = ?', [username])
         // 再从中取出用户id
     let user_id = userinfo[0].id
+    let oldNick = userinfo[0].nickname
     try {
-        // 更新用户信息
-        await querySql('update user set nickname = ?,head_img = ? where username = ?', [nickname, head_img, username])
-            // 通过用户id去更新评论表里的相对应的用户头像和用户昵称
-        let r = await querySql('update comment set nickname = ?,head_img = ? where user_id = ?', [nickname, head_img, user_id])
-        console.log("更新评论表", r);
-        // console.log(ress);
-        res.send({ code: 0, msg: '更新成功', data: null })
+        if (nickname === oldNick) {
+            // 更新用户信息
+            await querySql('update user set head_img = ? where username = ?', [head_img, username])
+                // 通过用户id去更新评论表里的相对应的用户头像和用户昵称
+            await querySql('update comment set head_img = ? where user_id = ?', [head_img, user_id])
+            res.send({ code: 0, msg: '更新成功', data: null })
+        } else {
+            //查看当前昵称是否已被占用
+            let nick = await querySql('select * from user where nickname = ?', [nickname]);
+            if (!nick || nick.length === 0) {
+                // 更新用户信息
+                await querySql('update user set nickname = ?,head_img = ? where username = ?', [nickname, head_img, username])
+                    // 通过用户id去更新评论表里的相对应的用户头像和用户昵称
+                await querySql('update comment set nickname = ?,head_img = ? where user_id = ?', [nickname, head_img, user_id])
+                res.send({ code: 0, msg: '更新成功', data: null })
+            } else {
+                res.send({ code: -1, msg: '昵称已被占用!' })
+            }
+        }
     } catch (e) {
         console.log(e)
         next(e)
