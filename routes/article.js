@@ -283,15 +283,23 @@ router.get('/myList', async(req, res, next) => {
     // expressJwt拦截token 后得到的username
     let { username } = req.user
     try {
+        // 当前页 和 每页的数量
+        let { title, curPage, pageSize } = req.query
+        let start = (curPage - 1) * pageSize;
+
         // 根据用户名查找用户id
         let userSql = 'select id from user where username = ?'
         let user = await querySql(userSql, [username])
         let user_id = user[0].id
+            // 获取管理员所有博客的数量
+        let numsql = 'select * from article where user_id = ? and title like "%' + title + '%"'
+        let coust = await querySql(numsql, [user_id])
+        coust = coust.length
             // 根据用户id查找文章 (也就是查找当前作者的文章,包括文章id,标题，内容)
-        let sql = 'select id,title,content,DATE_FORMAT(create_time,"%Y-%m-%d %H:%i:%s") AS create_time from article where user_id = ?'
+        let sql = 'select id,title,content,DATE_FORMAT(create_time,"%Y-%m-%d %H:%i:%s") AS create_time from article where user_id = ? and title like "%' + title + '%" limit ' + start + ',' + pageSize;
         let result = await querySql(sql, [user_id])
             // 将找到的结果返回到前端
-        res.send({ code: 0, msg: '获取成功', data: result })
+        res.send({ code: 0, msg: '获取成功', data: result, coust })
     } catch (e) {
         console.log(e)
         next(e)
